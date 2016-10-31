@@ -1,0 +1,57 @@
+\documentclass{report}
+
+\usepackage{graphicx}
+
+\title{Simple Regression Analysis of Advertising Data}
+
+\author{Alexander Lee}
+
+\date{\today}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle
+
+\begin{abstract}
+This report seeks to replicate the research found in \emph{Simple Linear Regression}, chapter 3 of the book \emph{An Introduction to Statistical Learning} by Gareth James, et al., on a set of advertising data.
+\end{abstract}
+
+\begin{introduction}
+The goal of this research is to use existing data to formulate a marketing plan that will result in higher product sales. To that end, we will run a linear regression to model the increase of sales against the amount of money spent on marketing the product. We will analyze this to determine how advertising affects sales, and how the company should budget for advertising in order to increase sales of the product.
+\end{introduction}
+
+\begin{data}
+The Advertising data set consists of the $Sales (in thousands of units)$ of a particular product in 200 different markets, along with advertising budgets (in thousands of dollars) for the product in each of those markets for three different media: $TV$, $Radio$, and $Newspaper$. We work primarily with the $TV$ data for this project, observing the effects of different levels of budget for TV advertising on the sales of units.
+
+<<load-data>>=
+load('regression.RData')
+head(advertising)
+@
+\end{data}
+
+\begin{methodology}
+We look at the relationship between $Sales$ and $TV$ budget using a simple linear model:
+
+  $Sales = \alpha + \beta TV$
+
+That is, we predict there to be a linear relationship between the amount of money spent on TV advertising and the number of sales of units. We approximate $\alpha$ and $\beta$ using a linear regression under the least squares criterion.
+\end{methodology}
+
+\begin{results}
+We computed the correlation coefficients using the $lm$ function, with $TV$ as a function of $Sales$.
+
+<<Linear-regression>>=
+print('Table 1: Information about the Linear Regression')
+ad_summ
+@
+
+The estimates of these coefficients, $\alpha$ and $\beta$, are \Sexpr{ad_summ$coefficients[1]} and \Sexpr{ad_summ$coefficients[2]}, respectively; that is, for every \$1,000 increase in spending on TV advertising, sales are projected to increase by \Sexpr{ad_summ$coefficients[2]*1000} units. On average, data will deviate from the true regression model by \Sexpr{ad_summ$sigma}. An $R^2$ of \Sexpr{ad_summ$r.squared}, means \Sexpr{ad_summ$r.squared*100}\% of the variability is explained by the model. An F-statistic of \Sexpr{ad_summ$fstatistic} means that the coefficients found by our model are very likely to be close to the true regression values.
+
+\incudegraphics{scatterplot-tv-sales.png}
+\end{results}
+
+\begin{conclusion}
+There is a positive correlation between the budget for TV advertising and Sales; however, this relationship is very minimal. For every $1,000 spent on advertising only another \Sexpr{ad_summ$coefficients[2]*1000} units are sold, so each unit would have to cost at least \Sexpr{round(1000/(ad_summ$coefficients[2]*1000), 2)} in order to break even or profit off the units sold. 
+\end{conclusion}
+
+\end{document}
